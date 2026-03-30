@@ -26,9 +26,15 @@ Route::middleware('auth.user')->group(function () {
     Route::get('/dashboard/data', [TimeEntryController::class, 'data'])->name('dashboard.data');
 
     Route::get('/time-entry', [TimeEntryController::class, 'create'])->name('time-entries.create');
-    Route::get('/time-entry/{timeEntry}', [TimeEntryController::class, 'show'])->name('time-entries.show');
+    Route::get('/time-entry/data', [TimeEntryController::class, 'entryData'])->name('time-entries.data');
+    Route::get('/time-entry/{timeEntry}/data', [TimeEntryController::class, 'showData'])->name('time-entries.show-data');
+    Route::get('/time-entry/{timeEntry}', [TimeEntryController::class, 'show'])
+        ->whereNumber('timeEntry')
+        ->name('time-entries.show');
     Route::post('/time-entry', [TimeEntryController::class, 'store'])->name('time-entries.store');
-    Route::delete('/time-entry/{timeEntry}', [TimeEntryController::class, 'destroy'])->name('time-entries.destroy');
+    Route::delete('/time-entry/{timeEntry}', [TimeEntryController::class, 'destroy'])
+        ->whereNumber('timeEntry')
+        ->name('time-entries.destroy');
 
     Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile');
     Route::patch('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');

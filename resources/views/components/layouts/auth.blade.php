@@ -16,6 +16,7 @@
     @if ($jsFile)
         <script src="{{ asset('build/' . $jsFile) }}" defer></script>
     @endif
+    @livewireStyles
     <style>
         #auth-loading-overlay[hidden] {
             display: none;
@@ -75,5 +76,6 @@
             window.addEventListener('pageshow', hideOverlay);
         })();
     </script>
+    @livewireScripts
 </body>
 </html>

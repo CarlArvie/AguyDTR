@@ -16,6 +16,7 @@
     @if ($jsFile)
         <script src="{{ asset('build/' . $jsFile) }}" defer></script>
     @endif
+    @livewireStyles
     <style>
         .nav-link {
             position: relative;
@@ -129,5 +130,6 @@
             window.addEventListener('pageshow', hideOverlay);
         })();
     </script>
+    @livewireScripts
 </body>
 </html>

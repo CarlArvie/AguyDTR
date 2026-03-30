@@ -30,6 +30,29 @@
         </div>
 
         <div class="rounded-lg border border-orange-500 bg-[rgb(38,38,38)] p-4">
+            <h2 class="mb-3 text-base font-semibold text-orange-700">Weekly Totals</h2>
+            <p class="mb-3 text-xs text-orange-400">Grouped by Monday to Sunday.</p>
+            <div class="overflow-x-auto">
+                <table class="min-w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b border-orange-500/40 text-left text-orange-500">
+                            <th class="px-3 py-2">Week</th>
+                            <th class="px-3 py-2">Range</th>
+                            <th class="px-3 py-2 text-right">Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody id="weekly-totals-body">
+                        <tr>
+                            <td colspan="3" class="px-3 py-3 text-center text-orange-400">
+                                Loading weekly totals...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="rounded-lg border border-orange-500 bg-[rgb(38,38,38)] p-4">
             <h2 class="mb-3 text-base font-semibold text-orange-700">All Time Entries</h2>
 
             <div id="db-loading" class="flex items-center gap-3 rounded-md bg-black/20 px-4 py-3 text-sm text-orange-400">
@@ -74,6 +97,7 @@
             const progressPercentNode = document.getElementById('progress-percent');
             const progressSummaryNode = document.getElementById('progress-summary');
             const progressBar = document.getElementById('progress-bar');
+            const weeklyTotalsBodyNode = document.getElementById('weekly-totals-body');
 
             const escapeHtml = (value) => String(value)
                 .replace(/&/g, '&amp;')
@@ -107,6 +131,24 @@
                     progressSummaryNode.textContent = `${data.total_hours} / ${data.target_hours} hours`;
                     progressBar.style.width = `${data.progress_percent}%`;
 
+                    if (!Array.isArray(data.weekly_totals) || data.weekly_totals.length === 0) {
+                        weeklyTotalsBodyNode.innerHTML = `
+                            <tr>
+                                <td colspan="3" class="px-2 py-3 text-center text-orange-400">
+                                    No weekly totals yet.
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        weeklyTotalsBodyNode.innerHTML = data.weekly_totals.map((week) => `
+                            <tr class="border-b border-orange-500/20 text-orange-400">
+                                <td class="px-2 py-2 font-medium text-orange-500">${escapeHtml(week.week_label ?? '-')}</td>
+                                <td class="px-2 py-2">${escapeHtml(week.range ?? '-')}</td>
+                                <td class="px-2 py-2 text-right text-orange-300">${escapeHtml(week.hours ?? '0.00')}</td>
+                            </tr>
+                        `).join('');
+                    }
+
                     if (!Array.isArray(data.entries) || data.entries.length === 0) {
                         entriesBody.innerHTML = `
                             <tr>
@@ -137,6 +179,13 @@
                     if (error) {
                         error.classList.remove('hidden');
                     }
+                    weeklyTotalsBodyNode.innerHTML = `
+                        <tr>
+                            <td colspan="3" class="px-2 py-3 text-center text-red-300">
+                                Unable to load weekly totals.
+                            </td>
+                        </tr>
+                    `;
                     entriesBody.innerHTML = `
                         <tr>
                             <td colspan="7" class="px-3 py-4 text-center text-red-400">Unable to load entries.</td>
